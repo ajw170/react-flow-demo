@@ -11,12 +11,25 @@ import {
     Panel,
     useReactFlow,
     ReactFlowProvider,
-    type Node
+    applyNodeChanges,
+    applyEdgeChanges,
+    type Node,
+    type Edge,
+    type FitViewOptions,
+    type OnConnect,
+    type OnNodesChange,
+    type OnEdgesChange,
+    type OnNodeDrag,
+    type NodeTypes,
+    type DefaultEdgeOptions, Connection,
 } from "@xyflow/react";
 import '@xyflow/react/dist/style.css';
 import {AndNode} from "./nodes/andNode";
 import {OrNode} from "./nodes/orNode";
 import {NotNode} from "./nodes/notNode";
+import {OccupancyNode} from "./nodes/occupancyNode";
+import {VelocityNode} from "./nodes/velocityNode";
+import {VolumeNode} from "./nodes/volumeNode";
 import Dagre from '@dagrejs/dagre';
 
 const getLayoutedElements = (nodes, edges, options) => {
@@ -50,22 +63,55 @@ const getLayoutedElements = (nodes, edges, options) => {
 
 const LayoutFlow = () => {
 
-    const initialNodes = [
-        {id: '1', position: {x: 0, y: 0}, type: 'and', data: {color: 'green'}},
-        {id: '2', position: {x: 0, y: 75}, type: 'and', data: {color: 'red'}},
-        {id: '3', position: {x: 0, y: 150}, type: 'or', data: {color: 'green'}},
-        {id: '4', position: {x: 0, y: 225}, type: 'not', data: {color: 'red'}},
-    ];
-    const initialEdges = [{id: 'e1-2', source: '1', target: '2'}];
+    // const initialNodes: Node[] = [
+    //     {id: '1', position: {x: 0, y: 0}, type: 'and', data: {color: 'green'}},
+    //     {id: '2', position: {x: 0, y: 75}, type: 'and', data: {color: 'red'}},
+    //     {id: '3', position: {x: 0, y: 150}, type: 'or', data: {color: 'green'}},
+    //     {id: '4', position: {x: 0, y: 225}, type: 'not', data: {color: 'red'}},
+    //     {id: '5', position: {x: 0, y: 300}, type: 'occupancy', data: {color: 'red'}},
+    //     {id: '6', position: {x: 0, y: 300}, type: 'volume', data: {color: 'red'}},
+    //     {id: '7', position: {x: 0, y: 300}, type: 'velocity', data: {color: 'red'}},
+    // ];
+    // const initialEdges: Edge[] = [{id: 'e1-2', source: '1', target: '2'}];
+    
+    const initialNodes: Node[] = [];
+    const initialEdges: Edge[] = [];
 
-    const nodeTypes = useMemo(() => ({and: AndNode, or: OrNode, not: NotNode}), []);
+    const nodeTypes: NodeTypes = useMemo(() => ({
+        and: AndNode,
+        or: OrNode,
+        not: NotNode,
+        occupancy: OccupancyNode,
+        volume: VolumeNode,
+        velocity: VelocityNode,
+    }), []);
 
     const {fitView} = useReactFlow();
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const [nodes, setNodes] = useState(initialNodes);
+    const [edges, setEdges] = useState(initialEdges);
+    const [idCounter, setIdCounter] = useState<number>(8);
 
-    const onConnect = useCallback(
-        (params) => setEdges((eds) => addEdge(params, eds)),
+    const onConnect: OnConnect = useCallback(
+        (connection: Connection) => {
+            const sourceNode = nodes.find(node => node.id === connection.source);
+            const sourceNodeType = sourceNode?.type;
+            if (sourceNodeType === 'not' && edges.some(edge => edge.source === connection.source)) {
+                // Prevent the connection
+                console.log('Not node can only have a single connection');
+            } else {
+                // Allow the connection
+                setEdges((eds: Edge[]) => addEdge(connection, eds));
+            }
+        },
+        [setEdges, edges, nodes],
+    );
+
+    const onNodesChange = useCallback(
+        (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+        [setNodes],
+    );
+    const onEdgesChange = useCallback(
+        (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
         [setEdges],
     );
 
@@ -84,12 +130,31 @@ const LayoutFlow = () => {
         [nodes, edges],
     );
 
+    const [dragging, setDragging] = useState<boolean>(false)
+
     return (
         <div className={"container"}>
             <div className="left-div">
                 <div style={{width: '100%', height: '100%'}}>
                     <ReactFlow nodes={nodes} nodeTypes={nodeTypes} edges={edges} onNodesChange={onNodesChange}
-                               onEdgesChange={onEdgesChange} onConnect={onConnect}>
+                               onEdgesChange={onEdgesChange} onConnect={onConnect}
+                               onDrop={(event) => {
+                                   const type = event.dataTransfer.getData('application/reactflow');
+                                   setNodes([...nodes].concat({id: idCounter.toString(), position: {x: 0, y: 0}, type: type, data: {color: 'green'}}));
+                                   setDragging(false);
+                                   setIdCounter(idCounter + 1);
+                               }}
+                               onDragOver={(event) => {
+                                   event.preventDefault();
+
+                               }}
+                               onDragEnter={() => {
+                                   setDragging(true);
+                               }}
+                               onDragLeave={() => {
+                                   setDragging(false);
+                               }}
+                               style={{backgroundColor: dragging ? 'lightgray' : 'white'}}>
                         <Controls/>
                         <Background variant="dots" gap={12} size={1}/>
                         <Panel position="top-right">
@@ -98,6 +163,7 @@ const LayoutFlow = () => {
                             }}>Organize!
                             </button>
                         </Panel>
+
                     </ReactFlow>
                 </div>
             </div>
@@ -125,7 +191,7 @@ const LayoutFlow = () => {
                     <div><h3>Specifiers</h3></div>
                     <div>
                         {
-                            ['Velocity', 'Occupancy', 'Volume'].map((type) => (
+                            ['velocity', 'occupancy', 'volume'].map((type) => (
                                 <div key={type}
                                      onDragStart={(event) => event.dataTransfer.setData('application/reactflow', type)}
                                      draggable

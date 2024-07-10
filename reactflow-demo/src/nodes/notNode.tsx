@@ -22,11 +22,6 @@ export function NotNode({data, selected}): NodeProps<NotNode> {
                 <h3>Not</h3>
             </div>
             <Handle type="source" position={Position.Bottom} id="a"/>
-            <Handle
-                type="source"
-                position={Position.Bottom}
-                id="b"
-            />
         </>
     );
 }
