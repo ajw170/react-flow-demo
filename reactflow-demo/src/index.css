@@ -42,9 +42,10 @@ h2, h3 {
 }
 
 button {
-  border-radius: 8px;
+  border-radius: 6px;
   border: 2px solid black;
-  padding: 0.6em 1.2em;
+  padding: 0.2em 0.6em;
+  margin: 0.1em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
