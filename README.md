@@ -10,4 +10,4 @@ for drawing connecting nodes.
 - ``npm run dev``
 
 Note that you must have node installed for this to work.  Once the server is running, you can view the
-application at [http://localhost:3000](http://localhost:3000).
+application by pressing ``u + enter`` in the terminal.  This will launch the browser window.
