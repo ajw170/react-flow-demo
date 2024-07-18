@@ -4,7 +4,7 @@ import type {Node, NodeProps} from '@xyflow/react';
 
 type VelocityNode = Node<{}, 'occupancy'>
 
-export function VelocityNode({data, selected, isConnectable}): NodeProps<VelocityNode> {
+export function VelocityNode({data, selected, isConnectable}: NodeProps<VelocityNode>) {
     return (
         <>
             <Handle type="target" position={Position.Top}/>

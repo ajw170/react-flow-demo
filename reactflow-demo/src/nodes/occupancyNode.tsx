@@ -4,7 +4,7 @@ import type {Node, NodeProps} from '@xyflow/react';
 
 type OccupancyNode = Node<{}, 'occupancy'>
 
-export function OccupancyNode({data, selected, isConnectable}): NodeProps<OccupancyNode> {
+export function OccupancyNode({data, selected, isConnectable}: NodeProps<OccupancyNode>) {
     return (
         <>
             <Handle type="target" position={Position.Top}/>

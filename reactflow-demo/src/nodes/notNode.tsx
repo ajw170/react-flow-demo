@@ -8,7 +8,7 @@ type NotNode = Node<{}, 'not'>
  * The and node.
  * @param data THe data for the node, if applicable.
  */
-export function NotNode({data, selected}): NodeProps<NotNode> {
+export function NotNode({data, selected}: NodeProps<NotNode>) {
     return (
         <>
             <Handle type="target" position={Position.Top}/>

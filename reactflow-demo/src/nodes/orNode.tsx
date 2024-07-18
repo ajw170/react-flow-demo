@@ -8,7 +8,7 @@ type OrNode = Node<{}, 'or'>
  * The and node.
  * @param data THe data for the node, if applicable.
  */
-export function OrNode({data, selected}): NodeProps<OrNode> {
+export function OrNode({data, selected}: NodeProps<OrNode>) {
     return (
         <>
             <Handle type="target" position={Position.Top}/>

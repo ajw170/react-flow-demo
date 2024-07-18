@@ -8,7 +8,7 @@ type AndNode = Node<{}, 'and'>
  * The and node.
  * @param data THe data for the node, if applicable.
  */
-export function AndNode({data, selected}): NodeProps<AndNode> {
+export function AndNode({data, selected}: NodeProps<AndNode>) {
     return (
         <>
             <Handle type="target" position={Position.Top}/>

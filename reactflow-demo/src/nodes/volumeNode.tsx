@@ -4,7 +4,7 @@ import type {Node, NodeProps} from '@xyflow/react';
 
 type VolumeNode = Node<{}, 'volume'>
 
-export function VolumeNode({data, selected, isConnectable}): NodeProps<VolumeNode> {
+export function VolumeNode({data, selected, isConnectable}: NodeProps<VolumeNode>) {
     return (
         <>
             <Handle type="target" position={Position.Top}/>

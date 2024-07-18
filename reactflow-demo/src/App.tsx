@@ -21,7 +21,7 @@ import {
     type OnEdgesChange,
     type OnNodeDrag,
     type NodeTypes,
-    type DefaultEdgeOptions, Connection,
+    type DefaultEdgeOptions, Connection, NodeProps,
 } from "@xyflow/react";
 import '@xyflow/react/dist/style.css';
 import {AndNode} from "./nodes/andNode";
@@ -31,6 +31,7 @@ import {OccupancyNode} from "./nodes/occupancyNode";
 import {VelocityNode} from "./nodes/velocityNode";
 import {VolumeNode} from "./nodes/volumeNode";
 import Dagre from '@dagrejs/dagre';
+import {Link} from 'react-router-dom';
 
 const getLayoutedElements = (nodes, edges, options) => {
     const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
@@ -73,18 +74,18 @@ const LayoutFlow = () => {
     //     {id: '7', position: {x: 0, y: 300}, type: 'velocity', data: {color: 'red'}},
     // ];
     // const initialEdges: Edge[] = [{id: 'e1-2', source: '1', target: '2'}];
-    
+
     const initialNodes: Node[] = [];
     const initialEdges: Edge[] = [];
 
-    const nodeTypes: NodeTypes = useMemo(() => ({
+    const nodeTypes: NodeTypes = {
         and: AndNode,
         or: OrNode,
         not: NotNode,
         occupancy: OccupancyNode,
         volume: VolumeNode,
-        velocity: VelocityNode,
-    }), []);
+        velocity: VelocityNode
+    };
 
     const {fitView} = useReactFlow();
     const [nodes, setNodes] = useState(initialNodes);
@@ -133,84 +134,94 @@ const LayoutFlow = () => {
     const [dragging, setDragging] = useState<boolean>(false)
 
     return (
-        <div className={"container"}>
-            <div className="left-div">
-                <div style={{width: '100%', height: '100%'}}>
-                    <ReactFlow nodes={nodes} nodeTypes={nodeTypes} edges={edges} onNodesChange={onNodesChange}
-                               onEdgesChange={onEdgesChange} onConnect={onConnect}
-                               onDrop={(event) => {
-                                   const type = event.dataTransfer.getData('application/reactflow');
-                                   setNodes([...nodes].concat({id: idCounter.toString(), position: {x: 0, y: 0}, type: type, data: {color: 'green'}}));
-                                   setDragging(false);
-                                   setIdCounter(idCounter + 1);
-                               }}
-                               onDragOver={(event) => {
-                                   event.preventDefault();
-
-                               }}
-                               onDragEnter={() => {
-                                   setDragging(true);
-                               }}
-                               onDragLeave={() => {
-                                   setDragging(false);
-                               }}
-                               style={{backgroundColor: dragging ? 'lightgray' : 'white'}}>
-                        <Controls/>
-                        <Background variant="dots" gap={12} size={1}/>
-                        <Panel position="top-right">
-                            <button onClick={() => {
-                                onLayout('TB')
-                            }}>Organize!
-                            </button>
-                        </Panel>
-
-                    </ReactFlow>
-                </div>
+        <>
+            <div><h1 style={{marginBottom: '0rem'}}>ReactFlow Demo</h1>
+                <p>Switch to DevExtreme: <Link to={'/devextreme'}>Go To DevExtreme</Link></p>
             </div>
-            <div className="right-div">
-                <div>
-                    <div><h3>Combinators</h3></div>
-                    <div>
-                        {
-                            ['and', 'or', 'not'].map((type) => (
-                                <div key={type}
-                                     onDragStart={(event) => event.dataTransfer.setData('application/reactflow', type)}
-                                     draggable
-                                     style={{
-                                         padding: '10px',
-                                         margin: '10px',
-                                         border: '1px solid gray',
-                                         borderRadius: '5px',
-                                         backgroundColor: type === 'and' ? 'lightgreen' : type === 'or' ? 'lightyellow' : type === 'not' ? 'lightpink' : 'lightblue'
-                                     }}>
-                                    {type}
-                                </div>
-                            ))
-                        }
-                    </div>
-                    <div><h3>Specifiers</h3></div>
-                    <div>
-                        {
-                            ['velocity', 'occupancy', 'volume'].map((type) => (
-                                <div key={type}
-                                     onDragStart={(event) => event.dataTransfer.setData('application/reactflow', type)}
-                                     draggable
-                                     style={{
-                                         padding: '10px',
-                                         margin: '10px',
-                                         border: '1px solid gray',
-                                         borderRadius: '5px',
-                                         backgroundColor: type === 'and' ? 'lightgreen' : type === 'or' ? 'lightyellow' : type === 'not' ? 'lightpink' : 'lightblue'
-                                     }}>
-                                    {type}
-                                </div>
-                            ))
-                        }
+            <div className={"container"}>
+                <div className="left-div">
+                    <div style={{width: '100%', height: '100%'}}>
+                        <ReactFlow nodes={nodes} nodeTypes={nodeTypes} edges={edges} onNodesChange={onNodesChange}
+                                   onEdgesChange={onEdgesChange} onConnect={onConnect}
+                                   onDrop={(event) => {
+                                       const type = event.dataTransfer.getData('application/reactflow');
+                                       setNodes([...nodes].concat({
+                                           id: idCounter.toString(),
+                                           position: {x: 0, y: 0},
+                                           type: type,
+                                           data: {color: 'green'}
+                                       }));
+                                       setDragging(false);
+                                       setIdCounter(idCounter + 1);
+                                   }}
+                                   onDragOver={(event) => {
+                                       event.preventDefault();
+
+                                   }}
+                                   onDragEnter={() => {
+                                       setDragging(true);
+                                   }}
+                                   onDragLeave={() => {
+                                       setDragging(false);
+                                   }}
+                                   style={{backgroundColor: dragging ? 'lightgray' : 'white'}}>
+                            <Controls/>
+                            <Background variant="dots" gap={12} size={1}/>
+                            <Panel position="top-right">
+                                <button onClick={() => {
+                                    onLayout('TB')
+                                }}>Organize!
+                                </button>
+                            </Panel>
+
+                        </ReactFlow>
                     </div>
                 </div>
-                <p>Drag elements onto the board and see what happens!</p>
+                <div className="right-div">
+                    <div>
+                        <div><h3>Combinators</h3></div>
+                        <div>
+                            {
+                                ['and', 'or', 'not'].map((type) => (
+                                    <div key={type}
+                                         onDragStart={(event) => event.dataTransfer.setData('application/reactflow', type)}
+                                         draggable
+                                         style={{
+                                             padding: '10px',
+                                             margin: '10px',
+                                             border: '1px solid gray',
+                                             borderRadius: '5px',
+                                             backgroundColor: type === 'and' ? 'lightgreen' : type === 'or' ? 'lightyellow' : type === 'not' ? 'lightpink' : 'lightblue'
+                                         }}>
+                                        {type}
+                                    </div>
+                                ))
+                            }
+                        </div>
+                        <div><h3>Specifiers</h3></div>
+                        <div>
+                            {
+                                ['velocity', 'occupancy', 'volume'].map((type) => (
+                                    <div key={type}
+                                         onDragStart={(event) => event.dataTransfer.setData('application/reactflow', type)}
+                                         draggable
+                                         style={{
+                                             padding: '10px',
+                                             margin: '10px',
+                                             border: '1px solid gray',
+                                             borderRadius: '5px',
+                                             backgroundColor: type === 'and' ? 'lightgreen' : type === 'or' ? 'lightyellow' : type === 'not' ? 'lightpink' : 'lightblue'
+                                         }}>
+                                        {type}
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
+                    <p>Drag elements onto the board and see what happens!</p>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

@@ -1,7 +1,7 @@
-# ReactFlow Demo
+# ReactFlow and DevExtreme Demo
 
-This application demonstrates how to use [ReactFlow](https://reactflow.dev/) with Vite, specifically
-for drawing connecting nodes.
+This application demonstrates how to use [ReactFlow](https://reactflow.dev/) and DevExtreme [DevExtreme React](https://js.devexpress.com/React/)
+with Vite, specifically for drawing connecting nodes.
 
 ## Installing and Running
 
