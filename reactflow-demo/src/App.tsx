@@ -1,3 +1,4 @@
+import 'devextreme/dist/css/dx.light.css';
 import React, {useState, useCallback, useMemo} from 'react'
 import './App.css'
 import {

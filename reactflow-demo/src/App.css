@@ -66,3 +66,19 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
+.left-div-devextreme {
+  flex: 3;
+  border: 1px solid black;
+  padding: 10px;
+  margin-right: 10px;
+}
+
+.right-div-devextreme {
+  flex: 1;
+  border: 1px solid black;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
