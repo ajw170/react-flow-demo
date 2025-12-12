@@ -17,7 +17,7 @@ The application features two separate implementations allowing you to compare th
 - **ReactFlow version** (`/`) - Flexible React-based node graph with custom components
 - **DevExtreme version** (`/devextreme`) - Professional diagramming component with built-in tools
 
-For a detailed explanation of all features and capabilities, see **[CAPABILITIES.md](./CAPABILITIES.md)**.
+For a detailed explanation of all features and capabilities, see **[CAPABILITIES.md](CAPABILITIES.md)**.
 
 ## Quick Start
 
